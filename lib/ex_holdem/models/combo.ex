@@ -1,5 +1,7 @@
 defmodule ExHoldem.Combo do
 
+  use ExHoldem.Constants
+
   alias ExHoldem.Card
   alias ExHoldem.Combo
 
@@ -26,6 +28,9 @@ defmodule ExHoldem.Combo do
       |> List.flatten
       |> eval
     end)
+    |> Enum.max_by(fn(%Combo{type: type, power: power}) ->
+      {type, power}
+    end)
 
   end
 
@@ -49,22 +54,6 @@ defmodule ExHoldem.Combo do
       permutations_inner(new_lst, permsize, [item|acc])
     end)
   end
-
-  @royal_flush 10
-  @straight_flush 9
-  @four 8
-  @full_house 7
-  @flush 6
-  @straight 5
-  @three 4
-  @two_pairs 3
-  @one_pair 2
-  @high_card 1
-
-  @jack 11
-  @queen 12
-  @king 13
-  @ace 14
 
   @spec eval([%Card{}]) :: %Combo{}
   defp eval(cards = [
@@ -126,19 +115,120 @@ defmodule ExHoldem.Combo do
     }
   end
   defp eval(cards = [
-        %Card{rank: kicker},
-        %Card{rank: rank},
-        %Card{rank: rank},
-        %Card{rank: rank},
-        %Card{rank: rank},
+        %Card{rank: rank1},
+        %Card{rank: rank1},
+        %Card{rank: rank1},
+        %Card{rank: rank2},
+        %Card{rank: rank2},
       ])
       do
     %Combo{
-      type: @four,
-      power: {rank, kicker},
+      type: @full_house,
+      power: {rank1, rank2},
       cards: cards,
     }
   end
-
+  defp eval(cards = [
+        %Card{suit: suit, rank: rank1},
+        %Card{suit: suit, rank: rank2},
+        %Card{suit: suit, rank: rank3},
+        %Card{suit: suit, rank: rank4},
+        %Card{suit: suit, rank: rank5},
+      ])
+      do
+    %Combo{
+      type: @flush,
+      power: {rank5, rank4, rank3, rank2, rank1},
+      cards: cards,
+    }
+  end
+  defp eval(cards = [
+        %Card{rank: rank1},
+        %Card{rank: rank2},
+        %Card{rank: rank3},
+        %Card{rank: rank4},
+        %Card{rank: rank5},
+      ]) when
+        (rank1 + 1 == rank2) and
+        (rank2 + 1 == rank3) and
+        (rank3 + 1 == rank4) and
+        (rank4 + 1 == rank5)
+      do
+    %Combo{
+      type: @straight,
+      power: rank5,
+      cards: cards,
+    }
+  end
+  defp eval(cards = [
+        %Card{rank: 2},
+        %Card{rank: 3},
+        %Card{rank: 4},
+        %Card{rank: power = 5},
+        %Card{rank: @ace},
+      ])
+      do
+    %Combo{
+      type: @straight,
+      power: power,
+      cards: cards,
+    }
+  end
+  defp eval(cards = [
+        %Card{rank: rank},
+        %Card{rank: rank},
+        %Card{rank: rank},
+        %Card{rank: kicker2},
+        %Card{rank: kicker1},
+      ])
+      do
+    %Combo{
+      type: @three,
+      power: {rank, kicker1, kicker2},
+      cards: cards,
+    }
+  end
+  defp eval(cards = [
+        %Card{rank: rank2},
+        %Card{rank: rank2},
+        %Card{rank: rank1},
+        %Card{rank: rank1},
+        %Card{rank: kicker},
+      ])
+      do
+    %Combo{
+      type: @two_pairs,
+      power: {rank1, rank2, kicker},
+      cards: cards,
+    }
+  end
+  defp eval(cards = [
+        %Card{rank: rank},
+        %Card{rank: rank},
+        %Card{rank: kicker3},
+        %Card{rank: kicker2},
+        %Card{rank: kicker1},
+      ])
+      do
+    %Combo{
+      type: @one_pair,
+      power: {rank, kicker1, kicker2, kicker3},
+      cards: cards,
+    }
+  end
+  defp eval(cards = [
+        %Card{rank: rank1},
+        %Card{rank: rank2},
+        %Card{rank: rank3},
+        %Card{rank: rank4},
+        %Card{rank: rank5},
+      ])
+      do
+    %Combo{
+      type: @high_card,
+      power: {rank5, rank4, rank3, rank2, rank1},
+      cards: cards,
+    }
+  end
 
 end
