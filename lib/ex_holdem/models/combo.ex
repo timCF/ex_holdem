@@ -21,7 +21,7 @@ defmodule ExHoldem.Combo do
         length2 = length(cards2)
         cond do
           (length1 == length2) -> rank1 < rank2
-          true -> (length1 < length2)
+          true -> (length1 > length2)
         end
       end)
       |> Enum.map(fn({_, cards = [_|_]}) -> cards end)

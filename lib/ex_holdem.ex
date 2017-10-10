@@ -17,6 +17,11 @@ defmodule ExHoldem.Constants do
       @king 13
       @ace 14
 
+      @spades :spades
+      @diamonds :diamonds
+      @hearts :hearts
+      @clubs :clubs
+
       alias ExHoldem.{Card, Combo, Game, Deck}
 
     end

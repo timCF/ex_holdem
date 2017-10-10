@@ -76,8 +76,8 @@ defmodule ExHoldem.Game do
   #
 
   defp calculate_wincombos(%Game{
-        table_cards: table_cards,
-        players_hands: players_hands,
+        table_cards: _,
+        players_hands: _,
        }) do
 
   end
